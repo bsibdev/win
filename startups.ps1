@@ -10,7 +10,7 @@ if (-not (Test-Path -Path $sourceDir)) {
     exit 1
 }   
 
-$batFiles = Get-ChildItem -Path "$sourceDir\*.bat" -File
+$batFiles = Get-ChildItem -Path "$sourceDir\*.*" -File
 
 $wshShell = New-Object -ComObject WScript.Shell
 
