@@ -42,7 +42,8 @@ while ($true) {
         Write-Log "Ensuring $driveLetter is mounted..."
 
         if (Test-Path -Path $driveLetter) {
-            Write-Log "$driveLetter is already mounted" -ForegroundColor Yellow
+            Write-Log "$driveLetter is already mounted.. Trying to mount anyway" -ForegroundColor Yellow #drive mount check doesn't work well enough. Need to find a reliable way to check for bad mount.
+            net use $driveLetter $networkPath \user:anonymous "" 2>$null
         } else {
             Write-Log "Mounting $networkPath as $driveLetter"
             net use $driveLetter $networkPath \user:anonymous "" 2>$null
@@ -50,6 +51,7 @@ while ($true) {
                 Write-Log "$networkPath successfully mounted as $driveLetter" -ForegroundColor Green
             } else {
                 Write-Log "Failed to mount $networkPath as $driveLetter" -ForegroundColor Red
+                net use $driveLetter $networkPath \user:anonymous "" 2>$null
                 $failure = $false
             }
         }
