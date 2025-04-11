@@ -2,7 +2,7 @@
 
 set "source=%USERPROFILE%\Pictures\Screenshots"
 set "destination=P:\PC\Screenshots"
-set "logfile=%USERPROFILE%\Logs\robocopy_sync_log.txt"
+set "logfile=C:\Users\et\repos\win-scripts\logs\sharex-sync.log"
 set "interval=2"
 
 :loop

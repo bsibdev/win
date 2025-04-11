@@ -1,7 +1,20 @@
+Start-Sleep -Seconds 60
+
 function Write-Log {
     param ([string]$Message)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     "$timestamp - $Message" | Out-File -FilePath $logFile -Append
+}
+
+$failure = $false
+function Test-Failure([boolean]$Failed) {
+    if ($Failed -eq $true) {
+        Write-Log "Trying again in 3 seconds..."
+        Start-Sleep -Seconds 1
+    } else {
+        Write-Log "Rechecking mount in 30 seconds..."
+        Start-Sleep -Seconds 30
+    }
 }
 
 $logFile = Join-Path -Path $PSScriptRoot -ChildPath "..\logs\mount.log"
@@ -21,10 +34,6 @@ Get-Content -Path $mountsFile | ForEach-Object {
 }
 
 
-
-
-$failed = $false
-
 while ($true) {
     foreach ($drive in $mounts.GetEnumerator()) {
         $driveLetter = $drive.Key
@@ -32,7 +41,7 @@ while ($true) {
 
         Write-Log "Ensuring $driveLetter is mounted..."
 
-        if (Test-Path -path $driveLetter) {
+        if (Test-Path -Path $driveLetter) {
             Write-Log "$driveLetter is already mounted" -ForegroundColor Yellow
         } else {
             Write-Log "Mounting $networkPath as $driveLetter"
@@ -41,16 +50,9 @@ while ($true) {
                 Write-Log "$networkPath successfully mounted as $driveLetter" -ForegroundColor Green
             } else {
                 Write-Log "Failed to mount $networkPath as $driveLetter" -ForegroundColor Red
-                $failed = $true
+                $failure = $false
             }
         }
     }
-        
-    if ($failed -eq $true) {
-        Write-Log "Trying again in 3 seconds..."
-        Start-Sleep -Seconds 3
-    } else {
-        Write-Log "Rechecking mount in 30 seconds..."
-        Start-Sleep -Second 30
-    }
+    Test-Failure $failure
 }

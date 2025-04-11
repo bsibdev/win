@@ -10,11 +10,12 @@ if (-not (Test-Path -Path $sourceDir)) {
     exit 1
 }   
 
-$batFiles = Get-ChildItem -Path "$sourceDir\*.*" -File
+$batScripts = Get-ChildItem -Path "$sourceDir\*.bat" -File
+$powershellScripts = Get-ChildItem -Path "$sourceDir\*.ps1" -File
 
 $wshShell = New-Object -ComObject WScript.Shell
 
-foreach ($file in $batFiles) {
+foreach ($file in $batScripts) {
     $shortcutName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
     $shortcutPath = Join-Path -Path $startupDir -ChildPath "$shortcutName.lnk"
 
@@ -27,5 +28,9 @@ foreach ($file in $batFiles) {
 
     Write-Host "Shortcut for $shortcutName added to startup folder"
 }
+
+#foreach ($file in $powershellScripts) {
+#
+#}
 
 Pause
